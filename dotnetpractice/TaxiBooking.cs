@@ -98,6 +98,10 @@ namespace ConsoleCabApp
             Profile = new Person(name, contact);
         }
 
+        public Owner(string username, string password) : base(username, password)
+        {
+        }
+
         public override void DisplayMenu()
         {
             Console.WriteLine($"Owner menu for {Profile.Name} ({Username})");
@@ -216,34 +220,192 @@ namespace ConsoleCabApp
             MainLoop();
         }
 
+        // ----------------------------
+        // Modified MainLoop: choose user type (Customer / Driver / Owner)
+        // ----------------------------
         static void MainLoop()
+{
+    while (true)
+    {
+        Console.WriteLine("\nSelect User Type:");
+        Console.WriteLine("1) Customer");
+        Console.WriteLine("2) Driver");
+        Console.WriteLine("3) Owner (Admin)");
+        Console.WriteLine("4) Exit");
+        Console.Write("Choice: ");
+        var choice = Console.ReadLine()?.Trim();
+
+        switch (choice)
+        {
+            case "1":
+                CustomerPortal();
+                break;
+            case "2":
+                DriverLogin();
+                break;
+            case "3":
+                OwnerPortal();
+                break;
+            case "4":
+                Console.WriteLine("Goodbye!");
+                return;
+            default:
+                Console.WriteLine("Invalid choice. Try again.");
+                break;
+        }
+    }
+}
+
+static void OwnerPortal()
+{
+    while (true)
+    {
+        Console.WriteLine("\n--- Owner Portal ---");
+        Console.WriteLine("1) Register");
+        Console.WriteLine("2) Login");
+        Console.WriteLine("3) Back to Main Menu");
+        Console.Write("Choice: ");
+        var ch = Console.ReadLine()?.Trim();
+        switch (ch)
+        {
+            case "1":
+                RegisterOwner();
+                break;
+            case "2":
+                OwnerLogin();
+                break;
+            case "3":
+                return;
+            default:
+                Console.WriteLine("Invalid choice.");
+                break;
+        }
+    }
+}
+
+static void RegisterOwner()
+{
+    Console.WriteLine("\n--- Owner Registration ---");
+    string username = ReadNonEmpty("Enter Owner Username: ");
+    if (DataStore.Owners.Any(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase)))
+    {
+        Console.WriteLine("Owner username already exists. Try again.");
+        return;
+    }
+    string password = ReadPassword("Enter Password: ");
+    string name = ReadNonEmpty("Enter Full Name: ");
+    string contact = ReadNonEmpty("Enter Contact Info: ");
+
+    var owner = new Owner(username, password, name, contact);
+    DataStore.Owners.Add(owner);
+    Console.WriteLine($"Owner '{username}' registered successfully!");
+}
+
+        // ----------------------------
+        // Customer portal: Register or Login
+        // ----------------------------
+        static void CustomerPortal()
         {
             while (true)
             {
-                Console.WriteLine("\nSelect:");
+                Console.WriteLine("\n--- Customer Portal ---");
                 Console.WriteLine("1) Register (Customer)");
-                Console.WriteLine("2) Login");
-                Console.WriteLine("3) Exit");
+                Console.WriteLine("2) Login (Customer)");
+                Console.WriteLine("3) Back to User Type Menu");
                 Console.Write("Choice: ");
-                var choice = Console.ReadLine()?.Trim();
-
-                switch (choice)
+                var ch = Console.ReadLine()?.Trim();
+                switch (ch)
                 {
                     case "1":
                         RegisterCustomer();
                         break;
                     case "2":
-                        LoginFlow();
+                        CustomerLogin();
                         break;
                     case "3":
-                        Console.WriteLine("Goodbye!");
                         return;
                     default:
-                        Console.WriteLine("Invalid choice. Try again.");
+                        Console.WriteLine("Invalid choice.");
                         break;
                 }
             }
         }
+
+        // ----------------------------
+        // Customer login wrapper
+        // ----------------------------
+        static void CustomerLogin()
+        {
+            Console.WriteLine("\n--- Customer Login ---");
+            string username = ReadNonEmpty("Username: ");
+            var acc = DataStore.Customers.FirstOrDefault(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            if (acc == null)
+            {
+                Console.WriteLine("Customer not found.");
+                return;
+            }
+
+            string password = ReadPassword("Password: ");
+            if (!acc.CheckPassword(password))
+            {
+                Console.WriteLine("Invalid password.");
+                return;
+            }
+
+            Console.WriteLine($"Welcome, {acc.Profile.Name}!");
+            CustomerMenu(acc);
+        }
+
+        // ----------------------------
+        // Driver login wrapper
+        // ----------------------------
+        static void DriverLogin()
+        {
+            Console.WriteLine("\n--- Driver Login ---");
+            string username = ReadNonEmpty("Username: ");
+            var acc = DataStore.Drivers.FirstOrDefault(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+            if (acc == null)
+            {
+                Console.WriteLine("Driver not found.");
+                return;
+            }
+
+            string password = ReadPassword("Password: ");
+            if (!acc.CheckPassword(password))
+            {
+                Console.WriteLine("Invalid password.");
+                return;
+            }
+
+            Console.WriteLine($"Welcome, {acc.Profile.Name}!");
+            DriverMenu(acc);
+        }
+
+        // ----------------------------
+        // Owner login wrapper
+        // ----------------------------
+       static void OwnerLogin()
+{
+    Console.WriteLine("\n--- Owner Login ---");
+    string username = ReadNonEmpty("Username: ");
+    var acc = DataStore.Owners.FirstOrDefault(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+    if (acc == null)
+    {
+        Console.WriteLine("Owner not found.");
+        return;
+    }
+
+    string password = ReadPassword("Password: ");
+    if (!acc.CheckPassword(password))
+    {
+        Console.WriteLine("Invalid password.");
+        return;
+    }
+
+    Console.WriteLine($"Welcome, {acc.Profile?.Name ?? acc.Username}!");
+    OwnerMenu(acc);
+}
+
 
         // ----------------------------
         // Registration
@@ -264,42 +426,6 @@ namespace ConsoleCabApp
             var customer = new Customer(username, password, name, contact);
             DataStore.Customers.Add(customer);
             Console.WriteLine($"Customer '{username}' created. You can login now.");
-        }
-
-        // ----------------------------
-        // Login
-        // ----------------------------
-        static void LoginFlow()
-        {
-            Console.WriteLine("\n--- Login ---");
-            string username = ReadNonEmpty("Username: ");
-            Account acc = DataStore.FindAccount(username);
-            if (acc == null)
-            {
-                Console.WriteLine("Account not found.");
-                return;
-            }
-
-            string password = ReadPassword("Password: ");
-            if (!acc.CheckPassword(password))
-            {
-                Console.WriteLine("Invalid password.");
-                return;
-            }
-
-            Console.WriteLine($"Welcome, {username}!");
-            if (acc is Customer c)
-            {
-                CustomerMenu(c);
-            }
-            else if (acc is Driver d)
-            {
-                DriverMenu(d);
-            }
-            else if (acc is Owner o)
-            {
-                OwnerMenu(o);
-            }
         }
 
         // ----------------------------
