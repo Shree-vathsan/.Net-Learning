@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add & Update Person Details</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f9f9f9;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 350px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="email"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 15px;
+      border: none;
+      background: #007bff;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background: #007bff;
+      color: white;
+    }
+
+    .edit-btn {
+      background: #ffc107;
+      color: black;
+    }
+
+    .delete-btn {
+      background: #dc3545;
+    }
+  </style>
+</head>
+<body>
+  <h2>Person Details Form</h2>
+
+  <form id="personForm">
+    <input type="hidden" id="editIndex" value="-1">
+    <label for="name">Name:</label>
+    <input type="text" id="name" required>
+
+    <label for="age">Age:</label>
+    <input type="number" id="age" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" required>
+
+    <button type="submit">Save</button>
+  </form>
+
+  <h3>Saved Records</h3>
+  <table id="personTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Email</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <script>
+    let people = [];
+
+    const form = document.getElementById("personForm");
+    const tableBody = document.querySelector("#personTable tbody");
+    const editIndex = document.getElementById("editIndex");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const age = document.getElementById("age").value;
+      const email = document.getElementById("email").value;
+
+      const index = parseInt(editIndex.value);
+
+      if (index === -1) {
+        // Add new record
+        people.push({ name, age, email });
+      } else {
+        // Update existing record
+        people[index] = { name, age, email };
+        editIndex.value = -1;
+      }
+
+      form.reset();
+      renderTable();
+    });
+
+    function renderTable() {
+      tableBody.innerHTML = "";
+      people.forEach((person, i) => {
+        const row = `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${person.name}</td>
+            <td>${person.age}</td>
+            <td>${person.email}</td>
+            <td>
+              <button class="edit-btn" onclick="editPerson(${i})">Edit</button>
+              <button class="delete-btn" onclick="deletePerson(${i})">Delete</button>
+            </td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+    }
+
+    function editPerson(index) {
+      const person = people[index];
+      document.getElementById("name").value = person.name;
+      document.getElementById("age").value = person.age;
+      document.getElementById("email").value = person.email;
+      editIndex.value = index;
+    }
+
+    function deletePerson(index) {
+      people.splice(index, 1);
+      renderTable();
+    }
+  </script>
+</body>
+</html>

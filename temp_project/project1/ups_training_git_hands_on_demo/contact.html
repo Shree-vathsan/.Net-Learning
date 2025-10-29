@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .info {
+            margin-top: 20px;
+        }
+
+        .info p {
+            font-size: 16px;
+            margin: 8px 0;
+        }
+
+        .info strong {
+            color: #0077b6;
+        }
+
+        form {
+            margin-top: 25px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        button {
+            margin-top: 15px;
+            width: 100%;
+            background: #0077b6;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #023e8a;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #555;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Contact Us</h1>
+
+        <div class="info">
+            <p><strong>📍 Address:</strong> 123 Tech Street, Chennai, India</p>
+            <p><strong>📞 Phone:</strong> +91 98765 43210</p>
+            <p><strong>📧 Email:</strong> info@infograss.com</p>
+        </div>
+
+        <form>
+            <label for="name">Full Name</label>
+            <input type="text" id="name" placeholder="Enter your name" required>
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+
+            <label for="message">Message</label>
+            <textarea id="message" placeholder="Your message..." required></textarea>
+
+            <button type="submit">Send Message</button>
+        </form>
+
+        <footer>
+            &copy; 2025 INFOGRASS Pvt. Ltd. All rights reserved.
+        </footer>
+    </div>
+
+</body>
+</html>
